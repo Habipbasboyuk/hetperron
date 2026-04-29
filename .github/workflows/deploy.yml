@@ -19,7 +19,7 @@ jobs:
 
       - name: Deploy Themes via rsync
         run: |
-          rsync -avz --delete \
+          rsync -az --delete \
           --exclude='.git*' \
           --exclude='.github*' \
           -e "ssh -p 22 -o StrictHostKeyChecking=no -o BatchMode=yes" \
