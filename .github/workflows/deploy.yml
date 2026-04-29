@@ -11,16 +11,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-
-      - name: Deploy Themes via rsync
-        run: |
-          rsync -e "ssh -p 22 -o StrictHostKeyChecking=no -o BatchMode=yes" \
-          -az --delete --rsync-path="rsync" \
-          --exclude='.git*' \
-          --exclude='.github*' \
-          ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/wp-content/themes/
+      - name: Deploy via SSH Action
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-az --delete"
+          SOURCE: "/"
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          TARGET: "/var/www/html/wp-content/themes/"
+          EXCLUDE: "/.git/, /.github/"
